@@ -1,0 +1,372 @@
+#:import theme app_theme
+#:import dp kivy.metrics.dp
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba: root.bg_color
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # ШАПКА
+        BoxLayout:
+            size_hint_y: None
+            height: dp(60)
+            padding: [dp(15), dp(10)]
+            canvas.before:
+                Color:
+                    rgba: theme.BG_PANEL
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                id: section_title
+                text: 'Лента новостей'
+                font_size: dp(18)
+                bold: True
+                color: theme.TEXT
+                halign: 'left'
+                text_size: self.size
+            Label:
+                id: user_info
+                text: 'Привет!'
+                font_size: dp(12)
+                color: theme.TEXT_DIM
+                halign: 'right'
+                text_size: self.size
+
+        # КОНТЕНТ
+        BoxLayout:
+            id: content_area
+            orientation: 'vertical'
+            size_hint_y: 1
+
+            # --- ЛЕНТА НОВОСТЕЙ ---
+            BoxLayout:
+                id: news_section
+                orientation: 'vertical'
+                opacity: 1
+                disabled: False
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(50)
+                    padding: [dp(10), dp(5)]
+                    spacing: dp(5)
+                    TextInput:
+                        id: search_input
+                        hint_text: 'Поиск...'
+                        multiline: False
+                        background_color: theme.BG_PANEL
+                        foreground_color: theme.TEXT
+                        padding: [dp(10), dp(10)]
+                    Button:
+                        text: 'Найти'
+                        size_hint_x: None
+                        width: dp(70)
+                        background_normal: ''
+                        background_color: theme.ACCENT
+                        on_release: root.search_news()
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(35)
+                    padding: [dp(10), 0]
+                    spacing: dp(10)
+                    Button:
+                        text: 'Обновить'
+                        size_hint_x: None
+                        width: dp(120)
+                        background_normal: ''
+                        background_color: theme.SUCCESS
+                        on_release: root.refresh_news()
+                    Label:
+                        id: status_label
+                        text: 'Готово'
+                        color: theme.TEXT_DIM
+                        font_size: dp(11)
+                        halign: 'left'
+                        text_size: self.size
+
+                # ФИЛЬТРЫ (С ПОДСВЕТКОЙ)
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(35)
+                    padding: [dp(10), 0]
+                    spacing: dp(5)
+                    Button:
+                        text: 'Все'
+                        size_hint_x: None
+                        width: dp(60)
+                        background_normal: ''
+                        background_color: theme.ACCENT if root.current_filter == 'Все' else theme.BG_PANEL
+                        on_release: root.filter_news(None)
+                    Button:
+                        text: 'IGN'
+                        size_hint_x: None
+                        width: dp(60)
+                        background_normal: ''
+                        background_color: theme.ACCENT if root.current_filter == 'IGN' else theme.BG_PANEL
+                        on_release: root.filter_news('IGN')
+                    Button:
+                        text: 'StopGame'
+                        size_hint_x: None
+                        width: dp(90)
+                        background_normal: ''
+                        background_color: theme.ACCENT if root.current_filter == 'StopGame' else theme.BG_PANEL
+                        on_release: root.filter_news('StopGame')
+                    Button:
+                        text: 'Kotaku'
+                        size_hint_x: None
+                        width: dp(70)
+                        background_normal: ''
+                        background_color: theme.ACCENT if root.current_filter == 'Kotaku' else theme.BG_PANEL
+                        on_release: root.filter_news('Kotaku')
+
+                ScrollView:
+                    size_hint: 1, 1
+                    do_scroll_x: False
+                    bar_width: dp(5)
+                    BoxLayout:
+                        size_hint_y: None
+                        height: max(news_list.minimum_height, self.parent.height)
+                        width: self.parent.width
+                        GridLayout:
+                            id: news_list
+                            cols: 1
+                            spacing: dp(10)
+                            padding: [dp(10), dp(10)]
+                            size_hint_y: None
+                            height: self.minimum_height
+                            width: self.parent.width
+
+            # --- МОИ ИГРЫ (ЦЕНТРИРОВАНО) ---
+            BoxLayout:
+                id: games_section
+                orientation: 'vertical'
+                opacity: 0
+                disabled: True
+
+                AnchorLayout:
+                    size_hint_y: None
+                    height: dp(100)
+                    anchor_x: 'center'
+                    anchor_y: 'top'
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: None, None
+                        size: min(root.width - dp(20), dp(400)), dp(90)
+                        pos_hint: {'center_x': 0.5, 'top': 1}
+                        spacing: dp(10)
+                        
+                        Spinner:
+                            text: 'Выбрать популярную игру'
+                            values: ('Dota 2', 'CS2', 'GTA 5', 'Cyberpunk 2077', 'The Witcher 3', 'Minecraft', 'Valorant', 'God of War')
+                            background_normal: ''
+                            background_color: theme.BG_PANEL
+                            color: theme.TEXT
+                            on_text: root.ids.game_input.text = self.text if self.text != 'Выбрать популярную игру' else ''
+                            
+                        BoxLayout:
+                            spacing: dp(5)
+                            TextInput:
+                                id: game_input
+                                hint_text: 'Название игры...'
+                                multiline: False
+                                background_color: theme.BG_PANEL
+                                foreground_color: theme.TEXT
+                                padding: [dp(10), dp(10)]
+                            Button:
+                                text: 'Добавить'
+                                size_hint_x: None
+                                width: dp(100)
+                                background_normal: ''
+                                background_color: theme.ACCENT
+                                on_release: root.add_game()
+
+                ScrollView:
+                    size_hint: 1, 1
+                    do_scroll_x: False
+                    bar_width: dp(5)
+                    GridLayout:
+                        id: games_list
+                        cols: 1
+                        spacing: dp(8)
+                        padding: [dp(10), dp(10)]
+                        size_hint_y: None
+                        height: self.minimum_height
+                        width: self.parent.width
+
+            # --- ИЗБРАННОЕ (КАК ЛЕНТА НОВОСТЕЙ) ---
+            BoxLayout:
+                id: favorites_section
+                orientation: 'vertical'
+                opacity: 0
+                disabled: True
+                
+                ScrollView:
+                    size_hint: 1, 1
+                    do_scroll_x: False
+                    bar_width: dp(5)
+                    BoxLayout:
+                        size_hint_y: None
+                        height: max(favorites_list.minimum_height, self.parent.height)
+                        width: self.parent.width
+                        GridLayout:
+                            id: favorites_list
+                            cols: 1
+                            spacing: dp(10)
+                            padding: [dp(10), dp(10)]
+                            size_hint_y: None
+                            height: self.minimum_height
+                            width: self.parent.width
+
+            # --- НАСТРОЙКИ (ЦЕНТРИРОВАНО) ---
+            BoxLayout:
+                id: settings_section
+                orientation: 'vertical'
+                opacity: 0
+                disabled: True
+                
+                AnchorLayout:
+                    anchor_x: 'center'
+                    anchor_y: 'top'
+                    
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: None, None
+                        width: min(root.width - dp(40), dp(500))
+                        height: self.minimum_height
+                        padding: [dp(20), dp(20)]
+                        spacing: dp(15)
+                        
+                        Label:
+                            text: 'Настройки'
+                            font_size: dp(24)
+                            bold: True
+                            color: theme.TEXT
+                            size_hint_y: None
+                            height: dp(40)
+                            halign: 'left'
+                            text_size: self.size
+                            
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(30)
+                            Label:
+                                text: 'Логин:'
+                                color: theme.TEXT_DIM
+                                size_hint_x: 0.3
+                                halign: 'left'
+                                text_size: self.size
+                            Label:
+                                id: settings_username
+                                text: '...'
+                                color: theme.TEXT
+                                size_hint_x: 0.7
+                                halign: 'left'
+                                text_size: self.size
+
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(30)
+                            Label:
+                                text: 'Email:'
+                                color: theme.TEXT_DIM
+                                size_hint_x: 0.3
+                                halign: 'left'
+                                text_size: self.size
+                            Label:
+                                id: settings_email
+                                text: '...'
+                                color: theme.TEXT
+                                size_hint_x: 0.7
+                                halign: 'left'
+                                text_size: self.size
+
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(30)
+                            Label:
+                                text: 'Статус:'
+                                color: theme.TEXT_DIM
+                                size_hint_x: 0.3
+                                halign: 'left'
+                                text_size: self.size
+                            Label:
+                                id: settings_role
+                                text: '...'
+                                color: theme.SUCCESS
+                                size_hint_x: 0.7
+                                halign: 'left'
+                                text_size: self.size
+                                
+                        Widget:
+                            size_hint_y: None
+                            height: dp(10)
+
+                        Button:
+                            text: '🎨 Сменить тему (Светлая/Темная)'
+                            size_hint_y: None
+                            height: dp(50)
+                            background_normal: ''
+                            background_color: theme.ACCENT
+                            on_release: root.toggle_theme()
+
+                        Button:
+                            text: '🗑 Очистить кэш новостей'
+                            size_hint_y: None
+                            height: dp(50)
+                            background_normal: ''
+                            background_color: theme.WARNING
+                            on_release: root.clear_cache()
+
+                        Button:
+                            text: 'Выйти из аккаунта'
+                            size_hint_y: None
+                            height: dp(50)
+                            background_normal: ''
+                            background_color: theme.DANGER
+                            on_release: root.logout()
+
+        # НИЖНЯЯ НАВИГАЦИЯ
+        BoxLayout:
+            size_hint_y: None
+            height: dp(60)
+            canvas.before:
+                Color:
+                    rgba: theme.BG_PANEL
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                text: 'Лента'
+                font_size: dp(12)
+                background_normal: ''
+                background_color: theme.BG_ACTIVE if root.current_section == 'news' else theme.BG_PANEL
+                color: theme.TEXT
+                on_release: root.show_section('news')
+            Button:
+                text: 'Игры'
+                font_size: dp(12)
+                background_normal: ''
+                background_color: theme.BG_ACTIVE if root.current_section == 'games' else theme.BG_PANEL
+                color: theme.TEXT
+                on_release: root.show_section('games')
+            Button:
+                text: 'Избранное'
+                font_size: dp(12)
+                background_normal: ''
+                background_color: theme.BG_ACTIVE if root.current_section == 'favorites' else theme.BG_PANEL
+                color: theme.TEXT
+                on_release: root.show_section('favorites')
+            Button:
+                text: 'Настройки'
+                font_size: dp(12)
+                background_normal: ''
+                background_color: theme.BG_ACTIVE if root.current_section == 'settings' else theme.BG_PANEL
+                color: theme.TEXT
+                on_release: root.show_section('settings')

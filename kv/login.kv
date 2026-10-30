@@ -1,0 +1,72 @@
+#:import theme app_theme
+#:import dp kivy.metrics.dp
+
+<LoginScreen>:
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        canvas.before:
+            Color:
+                rgba: theme.BG_DARK
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: min(root.width * 0.85, dp(350)), dp(400)
+            spacing: dp(15)
+
+            Label:
+                text: 'GameNews'
+                font_size: dp(36)
+                bold: True
+                size_hint_y: None
+                height: dp(60)
+                color: theme.ACCENT
+
+            TextInput:
+                id: username_input
+                hint_text: 'Логин'
+                multiline: False
+                size_hint_y: None
+                height: dp(50)
+                background_color: theme.BG_PANEL
+                foreground_color: theme.TEXT
+                padding: [dp(15), dp(15)]
+
+            TextInput:
+                id: password_input
+                hint_text: 'Пароль'
+                password: True
+                multiline: False
+                size_hint_y: None
+                height: dp(50)
+                background_color: theme.BG_PANEL
+                foreground_color: theme.TEXT
+                padding: [dp(15), dp(15)]
+
+            Label:
+                id: status_label
+                text: ''
+                size_hint_y: None
+                height: dp(20)
+                color: theme.DANGER
+
+            Button:
+                text: 'Войти'
+                size_hint_y: None
+                height: dp(50)
+                background_normal: ''
+                background_color: theme.ACCENT
+                on_release: root.do_login()
+
+            Button:
+                text: 'Зарегистрироваться'
+                size_hint_y: None
+                height: dp(40)
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: theme.TEXT_DIM
+                on_release: root.go_to_register()
