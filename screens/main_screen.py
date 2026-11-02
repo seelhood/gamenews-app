@@ -1,8 +1,6 @@
 import threading
 import time
-import re
-import html
-from database.repositories.favorite_repository import FavoriteRepository
+import webbrowser
 from kivy.uix.screenmanager import Screen
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
@@ -11,27 +9,16 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.modalview import ModalView
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import AsyncImage
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from kivy.clock import Clock, mainthread
 from kivy.metrics import dp
-from kivy.core.window import Window
 from kivy.uix.popup import Popup
-from database.models.news import News
-from database.models.favorite import Favorite
-from database.session import SessionLocal
-from database.repositories.news_repository import NewsRepository
-from kivy.properties import StringProperty, ListProperty
-from database.models.favorite import Favorite
-import webbrowser
-from kivy.clock import Clock
-from database.repositories.news_repository import NewsRepository
+
 from services.game_service import GameService
 from services.news_service import NewsService
-from services.stats_service import StatsService
 from services.favorite_service import FavoriteService
 from widgets.news_card import NewsCard
 from deep_translator import MyMemoryTranslator
-import socket
 
 
 class NewsReaderPopup(ModalView):
