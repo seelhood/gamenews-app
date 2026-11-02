@@ -47,7 +47,7 @@ android.no_compile_pyo = True
 android.release_artifact = apk
 
 # Обход ошибки libthorvg в сборщике
-p4a.branch = develop
+p4a.branch = master
 
 [buildozer]
 log_level = 2
