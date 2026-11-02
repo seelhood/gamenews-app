@@ -17,7 +17,7 @@ source.include_exts = py,png,jpg,kv,atlas,xml,db
 source.exclude_dirs = api, database, migrations, __pycache__, tests, .git, .buildozer
 
 # Версия приложения
-version = 1.0
+version = 1.1
 
 # --- КРИТИЧЕСКИ ВАЖНЫЕ НАСТРОЙКИ ---
 # Библиотеки: только клиентские. Никаких sqlalchemy, bcrypt и psycopg2!
