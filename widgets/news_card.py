@@ -42,10 +42,17 @@ class NewsCard(BoxLayout):
             Color(0.2, 0.2, 0.25, 1)
             RoundedRectangle(pos=img_container.pos, size=img_container.size, radius=[dp(8)])
         
-        if self.image_url:
-            img_container.add_widget(AsyncImage(source=self.image_url, allow_stretch=True, keep_ratio=False))
+        # --- ЗАЩИТА КАРТИНКИ ---
+        if self.image_url and str(self.image_url).startswith("http"):
+            try:
+                img = AsyncImage(source=self.image_url, allow_stretch=True, keep_ratio=False)
+                img.bind(on_error=lambda instance, value: self._show_image_error(img_container))
+                img_container.add_widget(img)
+            except Exception:
+                self._show_image_error(img_container)
         else:
-            img_container.add_widget(Label(text="NEWS", color=(0.5, 0.5, 0.5, 1), font_size=dp(12)))
+            self._show_image_error(img_container)
+        # ------------------------
             
         text_layout = BoxLayout(orientation="vertical", spacing=dp(5), size_hint_x=1)
         
@@ -59,7 +66,7 @@ class NewsCard(BoxLayout):
         self.read_btn = Button(text="Читать", size_hint_x=None, width=dp(80), background_normal="", background_color=(0.2, 0.4, 0.7, 1), font_size=dp(11))
         self.read_btn.bind(on_release=lambda x: self._call_cb("on_read_callback"))
         
-        self.fav_btn = Button(text="в­ђ", size_hint_x=None, width=dp(40), background_normal="", background_color=(0.8, 0.6, 0.2, 1), font_size=dp(14))
+        self.fav_btn = Button(text="⭐", size_hint_x=None, width=dp(40), background_normal="", background_color=(0.8, 0.6, 0.2, 1), font_size=dp(14))
         self.fav_btn.bind(on_release=lambda x: self._call_cb("on_favorite_callback"))
         
         bottom.add_widget(self.read_btn)
@@ -78,6 +85,11 @@ class NewsCard(BoxLayout):
 
         self.add_widget(img_container)
         self.add_widget(text_layout)
+
+    def _show_image_error(self, container):
+        """Показывает заглушку, если картинка не загрузилась"""
+        container.clear_widgets()
+        container.add_widget(Label(text="NEWS", color=(0.5, 0.5, 0.5, 1), font_size=dp(12)))
 
     def _call_cb(self, cb_name):
         cb = getattr(self, cb_name, None)
