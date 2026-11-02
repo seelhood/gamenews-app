@@ -21,7 +21,7 @@ version = 1.1
 
 # --- КРИТИЧЕСКИ ВАЖНЫЕ НАСТРОЙКИ ---
 # Библиотеки: только клиентские. Никаких sqlalchemy, bcrypt и psycopg2!
-requirements = python3==3.10.12,hostpython3==3.10.12,setuptools,wheel,kivy==2.2.1,requests,deep-translator,certifi,urllib3,chardet,idna,pillow
+requirements = python3==3.10.12,hostpython3==3.10.12,setuptools,wheel,kivy==2.2.1,requests,deep-translator,certifi,urllib3,chardet,idna
 
 # Ориентация экрана
 orientation = portrait
