@@ -12,6 +12,6 @@
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
-API_URL = "http://192.168.1.19:8000"
+API_URL = "http://10.147.194.58:8000"
 
 config = Config()
